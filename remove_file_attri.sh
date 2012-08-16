@@ -30,8 +30,8 @@ function cleanup_single_target {
 	fi
 
 	#best solution 
-	attris=`ls -Rl@ $file | grep -E '^\s' | awk '{print $1}'`;
-	#attris=$(ls -Rl@ $file | grep -E '^\s' | awk '{print $1}');
+	attris=`ls -l@ $file | grep -E '^\s' | awk '{print $1}'`;
+	#attris=$(ls -l@ $file | grep -E '^\s' | awk '{print $1}');
 
 
 	#solution 2, have bugs when there is hex outputs
