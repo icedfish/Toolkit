@@ -16,6 +16,8 @@
 #				2. NTFS的移动硬盘上有些文件在mac下面显示灰色，无法打开。
 # 			http://en.wikipedia.org/wiki/Extended_file_attributes
 #
+# Known Issue: 文件名带空格等特殊字符会导致找不到文件出错
+#
 # Version:	0.3
 # Last Modify: 2012-8-12
 # Tested: Mac OS X - Mountain Lion
