@@ -57,3 +57,9 @@ yum install htop -y
 
 
 
+#
+# crontab -e 
+# Add GLobal Path For Crontab
+# PATH=/home/php/bin:/home/www/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+#
+

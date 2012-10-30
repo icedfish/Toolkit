@@ -32,12 +32,10 @@ function cleanup_single_target {
 	fi
 
 	#best solution 
-	attris=`ls -l@ $file | grep -E '^\s' | awk '{print $1}'`;
-	#attris=$(ls -l@ $file | grep -E '^\s' | awk '{print $1}');
+	attris=`xattr -l $file | awk '{print $1}' | grep -v -E '^[0-9a-f]{8}' | sed "s/:$//"`;
 
-
-	#solution 2, have bugs when there is hex outputs
-	#attris=`xattr -l $file | awk '{print $1}' | sed "s/:$//"`;
+	#solution 2, have bugs with some strage attris
+	#attris=`ls -l@ $file | grep -E '^\s' | awk '{print $1}'`;
 
 	for i in $attris;
 	do
