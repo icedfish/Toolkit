@@ -35,6 +35,7 @@ function cleanup_single_target {
 	attris=`xattr -l $file | awk '{print $1}' | grep -v -E '^[0-9a-f]{8}' | sed "s/:$//"`;
 
 	#solution 2, have bugs with some strage attris
+	#			like: com.apple.metadata:kMDItemWhereFroms
 	#attris=`ls -l@ $file | grep -E '^\s' | awk '{print $1}'`;
 
 	for i in $attris;
