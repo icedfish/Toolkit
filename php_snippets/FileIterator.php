@@ -2,16 +2,16 @@
 //yubing@baixing.com
 
 /*
- * Version: v1.0
+ * Version: v1.1
  *
- * Tested on: php 5.4.9
+ * Tested on: php 5.4.9 & 5.3.10
  *
  * 递归遍历指定目录，查找指定文件后缀的文件
  * 遍历返回的都是DirectoryIterator对象
  *
  * Sample：
  *
- * $it = new FileIterator(ROOT.'/static', 'js');
+ * $it = FileIterator::create(ROOT.'/static', 'js');
  * foreach($it as $_js) {
  * 	  echo $_js->getFilename() . "\n";
  * }
@@ -26,61 +26,24 @@
  * }
 */
 
-class FileIterator implements Iterator {
-	private $file_ext;
-	private $stack = [];
-
-	public function __construct($path, $file_ext = 'php') {
+class FileIterator {
+	public static function create($path, $file_ext = 'php') {
 		if (!file_exists($path)) throw new Exception("path: '$path'' not exist!");
+		$handler = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS));
+		return new ExtensionFilter($handler, $file_ext);
+	}
+}
+
+class ExtensionFilter extends FilterIterator {
+	private $file_ext;
+
+	public function __construct(Iterator $iterator, $file_ext = 'php') {
+		parent::__construct($iterator);
 		$this->file_ext = $file_ext;
-		$this->push($path);
 	}
 
-	private function handler() {
-		return end($this->stack);
+	public function accept() {
+		$item = $this->getInnerIterator()->current();
+		return $item->getExtension() == $this->file_ext;
 	}
-
-	private function push($path) {
-		array_push($this->stack, new FilesystemIterator($path, FilesystemIterator::SKIP_DOTS));
-	}
-
-	public function rewind() {
-	}
-
-	public function valid() {
-		if (!$this->handler()->valid()) {
-			if (count($this->stack) > 1) {
-				array_pop($this->stack);
-				return $this->valid();
-			} else {
-				return false;
-			}
-		} else {
-			$_item = $this->handler()->current();
-			if ($_item->getExtension() == $this->file_ext) {
-				return true;
-			} elseif ($_item->isDir()) {
-				$this->next();
-				$this->push($_item->getPathname());
-				return $this->valid();
-			} else {
-				$this->next();
-				return $this->valid();
-			}
-		}
-	}
-
-	public function current() {
-		return $this->handler()->current();
-	}
-
-	public function next() {
-		$this->handler()->next();
-	}
-
-	public function key() {
-		return $this->handler()->key();
-	}
-
-
 }
