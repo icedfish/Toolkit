@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<div id="map"></div>
+
+<script>
+	function showPosition(position) {
+		var lat_lng = position.coords.latitude + "," + position.coords.longitude;
+		document.getElementById("map").innerHTML =
+				"当前海拔:<br />"
+				+ "<b>" + Math.round(position.coords.altitude)
+				+ '米 </b>( +/-' + Math.round(position.coords.altitudeAccuracy) + '米 )'
+				+ '<br />当前位置：<br />'
+				+ "<img src='" + "http://maps.googleapis.com/maps/api/staticmap?center=" + lat_lng
+				+ "&markers=color:green%7Clabel:C%7C" + lat_lng + "&zoom=14&size=400x300&sensor=false" + "'>";
+	}
+
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showPosition);
+	} else {
+		alert('请允许浏览器共享你的地理坐标！');
+	}
+</script>
+</html>
