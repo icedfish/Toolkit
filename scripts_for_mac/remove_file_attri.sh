@@ -16,11 +16,10 @@
 #				2. NTFS的移动硬盘上有些文件在mac下面显示灰色，无法打开。
 # 			http://en.wikipedia.org/wiki/Extended_file_attributes
 #
-# Known Issue: 文件名带空格等特殊字符会导致找不到文件出错
-#
-# Version:	0.3
-# Last Modify: 2012-8-12
-# Tested: Mac OS X - Mountain Lion
+# 
+# Version:	0.4
+# Last Modify: 2013-11-05
+# Tested: Mac OS 10.9
 #########################################################
 
 
@@ -32,7 +31,7 @@ function cleanup_single_target {
 	fi
 
 	#best solution 
-	attris=`xattr -l $file | awk '{print $1}' | grep -v -E '^[0-9a-f]{8}' | sed "s/:$//"`;
+	attris=`xattr -l "$file" | awk '{print $1}' | grep -v -E '^[0-9a-f]{8}' | sed "s/:$//"`;
 
 	#solution 2, have bugs with some strage attris
 	#			like: com.apple.metadata:kMDItemWhereFroms
@@ -41,18 +40,18 @@ function cleanup_single_target {
 	for i in $attris;
 	do
 		echo "Remove $i from $file";
-		xattr -d $i $file;
+		xattr -d $i "$file";
 	done
 }
 
 #处理单个输入
-if [ ! -z $1 ]; then
-	cleanup_single_target $1;
+if [ ! -z "$1" ]; then
+	cleanup_single_target "$1";
 	exit;
 fi
 
 #处理管道输入
 while read line; do
-	cleanup_single_target $line;
+	cleanup_single_target "$line";
 done
 
