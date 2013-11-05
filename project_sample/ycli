@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+/**
+ * You need to run `chmod +x ycli` first
+ */
+
+include(__DIR__ . '/init.php');
+
+class Cli {
+	private function usage() {
+		echo "# Run php code with auto-load classes #";
+		echo "\nUsage:";
+		echo "\n~$ ycli xx.php \t\t run a php file";
+		echo "\n~$ ycli -r <php_codes> \t\t run a piece of code";
+		echo "\n";
+		exit(1);
+	}
+
+	private function runCode($code) {
+		return eval($code);
+	}
+
+	private function runFile($argv) {
+		array_shift($argv); //确保用php file, cli.php file的效果是一样的
+		include $argv[0];
+	}
+
+	public function __construct($argv) {
+		if (count($argv) < 2) {
+			$this->usage();
+		}
+
+		if ($argv[1] == '-r' && isset($argv[2])) {
+			$this->runCode($argv[2]);
+		} elseif (is_file($argv[1])) {
+			$this->runFile($argv);
+		} else {
+			$this->usage();
+		}
+	}
+}
+
+new Cli($argv);
