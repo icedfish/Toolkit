@@ -22,13 +22,30 @@ class Mysql {
 	 * @return mysqli
 	 */
 	protected static $client = null;
-	public static function client() {
-		if (!isset(self::$client)) {
-			self::$client = new mysqli(DB_HOST, DB_USER, DB_PASSWORD);
-			self::$client->select_db(DB_NAME);
-			self::$client->set_charset('utf8');
+	protected function client() {
+		if (!self::$client) {
+			$conn = mysqli_init();
+			$i = 2;     //如果连接超时重试两次
+			do {
+				$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 1);
+				@$conn->real_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, null, null, MYSQL_CLIENT_COMPRESS);
+			} while ($i -- > 0 && $conn->connect_error);
+			if ($conn->connect_error) {
+				throw new Exception("Mysql connect fail on error: ({$conn->connect_errno}){$conn->connect_error}");
+			}
+			$conn->set_charset('utf8');
+			self::$client = $conn;
+		} else {
+			$conn = self::$client;
 		}
-		return self::$client;
+		// mysql::ping() is no longer working for using mysqlnd. see: https://bugs.php.net/bug.php?id=52561
+		if ( isset($conn->_last) && (time() - $conn->_last) > 10 ) {
+			//reconnect when conn lost, avoid 'MySQL server has gone away' error
+			self::$client = null;
+			$conn = $this->client();
+		}
+		$conn->_last = time();
+		return $conn;
 	}
 
 	public function __construct($id = null) {
