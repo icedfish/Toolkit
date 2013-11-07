@@ -13,6 +13,7 @@ class UrlFetcher {
 	private $use_proxy = null;
 
 	const DEFAULT_UA = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)';
+	const MOBILE_UA  = 'Mozilla/5.0 (iPhone; CPU iPhone OS 7_0_3 like Mac OS X) AppleWebKit/531.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11B511 Safari/9537.53';
 
 	public function getUrl($url, $timeout = 5) {
 		$this->initInstance();
@@ -31,7 +32,7 @@ class UrlFetcher {
 				curl_setopt($this->ch, CURLOPT_PROXY, $proxy['host']);
 				curl_setopt($this->ch, CURLOPT_PROXYTYPE, $proxy['type']);
 				$result = curl_exec($this->ch);
-				if ($result) break;
+				if ($result && !curl_errno($this->ch)) break;
 			}
 		} else {
 			$result = curl_exec($this->ch);
@@ -65,6 +66,7 @@ class UrlFetcher {
 
 	//使用Proxy抓取，具体用哪个Proxy可以随机。
 	public function useRandomProxy() {
+		$this->setCookie();//随机代理情况一定希望cookie不要跟着的,要不不是让人抓么.
 		$this->use_proxy = [];
 		return $this;
 	}

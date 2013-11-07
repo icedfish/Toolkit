@@ -16,7 +16,7 @@ class Proxy {
 	 * @return array 代理信息
 	 */
 	public static function rand() {
-		$list = @file(self::dataPath(), FILE_IGNORE_NEW_LINES);
+		$list = self::all();
 		if (!$list) throw new Exception("Proxy数据文件不存在或者读取出错!");
 		$one = $list[array_rand($list)];
 		return
@@ -27,7 +27,11 @@ class Proxy {
 			];
 	}
 
-	public static function dataPath() {
+	public static function all() {
+		return @file(self::dataPath(), FILE_IGNORE_NEW_LINES) ?: [];
+	}
+
+	private static function dataPath() {
 		return ROOT . '/data/ip.txt';
 	}
 
@@ -80,14 +84,15 @@ class Proxy {
 		return $valid;
 	}
 
-	public function addProxies($list, $is_append = false) {
+	public function addProxies($list) {
 		shuffle($list); //乱序检查，有时候拿到的IP列表会出现一个ip多端口上有代理，应该被打散开查。
 		$valid = $this->filterProxies($list);
+
+		$all = array_unique( array_merge($valid + self::all()) );
 		Logger::log("Get " . count($valid) . " proxies from " . count($list));
 		return file_put_contents(
 			self::dataPath(),
-			($is_append ? "\n" : '') . join("\n", $valid),
-			($is_append ? FILE_APPEND | LOCK_EX : 0)
+			join("\n", $all)
 		);
 	}
 
