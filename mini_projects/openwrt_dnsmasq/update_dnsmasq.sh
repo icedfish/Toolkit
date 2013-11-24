@@ -18,7 +18,7 @@
 # v2 比v1 ：大幅节省空间占用和效率(路由器的硬件比较弱)
 mkdir -p /etc/dnsmasq
 
-wget -O - http://adblock-chinalist.googlecode.com/svn/trunk/adblock-lazy.txt | grep ^\|\|[^\*]*\^$ |sed -e 's#||##' -e 's#\^##'| tr "\n" " " |sed -e "s#^#127.0.0.1 #" > /etc/dnsmasq/disabled_simple_hosts
+wget -O - http://adblock-chinalist.googlecode.com/svn/trunk/adblock-lazy.txt | grep ^\|\|[^\*]*\^$ | grep -v cloudfront.net | grep -v rackcdn.com | sed -e 's#||##' -e 's#\^##'| tr "\n" " " |sed -e "s#^#127.0.0.1 #" > /etc/dnsmasq/disabled_simple_hosts
 
 grep addn-hosts /etc/dnsmasq.conf || echo -e "\naddn-hosts=/etc/dnsmasq/disabled_simple_hosts" >> /etc/dnsmasq.conf
 
