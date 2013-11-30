@@ -22,4 +22,4 @@ wget -O - http://adblock-chinalist.googlecode.com/svn/trunk/adblock-lazy.txt | g
 
 grep addn-hosts /etc/dnsmasq.conf || echo -e "\naddn-hosts=/etc/dnsmasq/disabled_simple_hosts" >> /etc/dnsmasq.conf
 
-/etc/init.d/dnsmasq restart
+/etc/init.d/dnsmasq reload
