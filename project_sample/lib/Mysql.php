@@ -21,28 +21,13 @@ class Mysql {
 	/**
 	 * @return mysqli
 	 */
-	protected static $client = null;
 	protected function client() {
-		if (!self::$client) {
+		static $conn = null;
+		if (!$conn || ((time() - $conn->_last) > 10)) {
 			$conn = mysqli_init();
-			$i = 2;     //如果连接超时重试两次
-			do {
-				$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 1);
-				@$conn->real_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, null, null, MYSQL_CLIENT_COMPRESS);
-			} while ($i -- > 0 && $conn->connect_error);
-			if ($conn->connect_error) {
-				throw new Exception("Mysql connect fail on error: ({$conn->connect_errno}){$conn->connect_error}");
-			}
+			$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 1);
+			$conn->real_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 			$conn->set_charset('utf8');
-			self::$client = $conn;
-		} else {
-			$conn = self::$client;
-		}
-		// mysql::ping() is no longer working for using mysqlnd. see: https://bugs.php.net/bug.php?id=52561
-		if ( isset($conn->_last) && (time() - $conn->_last) > 10 ) {
-			//reconnect when conn lost, avoid 'MySQL server has gone away' error
-			self::$client = null;
-			$conn = $this->client();
 		}
 		$conn->_last = time();
 		return $conn;
@@ -53,7 +38,7 @@ class Mysql {
 			$this->load($id);
 		}
 		if (!static::$table_name) {
-			throw new Exception("No \$table_name defined for " . get_class($this) . ' !' );
+			throw new Exception("No \$table_name defined for " . get_class($this) . ' !');
 		}
 	}
 
@@ -70,7 +55,7 @@ class Mysql {
 	public function load($id) {
 		$this->reset();
 
-		$id = self::client()->real_escape_string($id);
+		$id = $this->client()->real_escape_string($id);
 		$result = $this->client()->query("SELECT * FROM `" . static::$table_name . "` WHERE `id` = '$id' LIMIT 1");
 
 		if ($result->num_rows) {
@@ -86,8 +71,9 @@ class Mysql {
 		if (empty($ids)) {
 			return array();
 		}
-		$ids_str = self::client()->real_escape_string(join(',', $ids));
-		$result = self::client()->query("SELECT * FROM `" . static::$table_name . "` WHERE `id` IN ({$ids_str})");
+		$o = new self;
+		$ids_str = $o->client()->real_escape_string(join(',', $ids));
+		$result = $o->client()->query("SELECT * FROM `" . static::$table_name . "` WHERE `id` IN ({$ids_str})");
 		$ret = array();
 		if ($result->num_rows) {
 			while ($data = $result->fetch_object(get_called_class())) {
@@ -115,7 +101,7 @@ class Mysql {
 
 		$sql = "SELECT COUNT(1) FROM `" . static::$table_name . "` WHERE {$where_str}";
 
-		$result = self::client()->query($sql);
+		$result = $this->client()->query($sql);
 		return current($result->fetch_row());
 	}
 
@@ -127,7 +113,7 @@ class Mysql {
 
 		$sql = "DELETE FROM `" . static::$table_name . "` WHERE `id` = '{$id_str}' LIMIT 1";;
 
-		$result = self::client()->query($sql);
+		$result = $this->client()->query($sql);
 		return $result;
 	}
 
@@ -145,7 +131,7 @@ class Mysql {
 		$option_str .= ' LIMIT ' . $option['limit'];
 
 		$sql = "SELECT * FROM `" . static::$table_name . "` WHERE {$where_str} {$option_str}";
-		$result = self::client()->query($sql);
+		$result = $this->client()->query($sql);
 		$ret = array();
 		if ($result->num_rows) {
 			while ($data = $result->fetch_object(get_class($this))) {
@@ -160,10 +146,11 @@ class Mysql {
 		$col = $this->columns();
 		$set_strs = array();
 		foreach ($col as $each_col) {
-			$set_strs [] = "`{$each_col}` = " . $this->encode($each_col);
+			if($each_col == 'id') continue; //id应该不可改。
+			$set_strs[] = "`{$each_col}` = " . $this->encode($each_col);
 		}
 		$set_str = join(', ', $set_strs);
-		$sql = "UPDATE `" . static::$table_name . "` SET $set_str WHERE `id` = {$this->id}";
+		$sql = "UPDATE `" . static::$table_name . "` SET $set_str WHERE `id` = '{$this->id}' limit 1";
 		$this->client()->query($sql);
 		return $this;
 	}
@@ -177,11 +164,14 @@ class Mysql {
 			array($this, 'encode'), $col
 		));
 		$sql = "INSERT INTO `" . static::$table_name . "` ({$col_str}) VALUES ({$values_str})";
-		$this->client()->query($sql);
-		if ($this->client()->errno) {
-			throw new Exception("Insert Errpr: " . $this->client()->error);
+		$conn = $this->client();
+		$conn->query($sql);
+		if ($conn->errno) {
+			throw new Exception("Insert Errpr: " . $conn->error);
+		} else if ($conn->insert_id) {
+			return $this->id = $conn->insert_id;
 		} else {
-			return $this->id = $this->client()->insert_id;
+			return $this->id; //insert时指定ID的情况
 		}
 	}
 
