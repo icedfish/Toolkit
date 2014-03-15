@@ -1,6 +1,6 @@
 -module(math).  %往现有的math module上增加新的函数。
 -export([fib/1, factorial/1]).
--export([fib_plus/1]).
+-export([fib_plus/1, factorial_plus/1]).
 
 fib(N) when (N =< 0) orelse (not is_integer(N)) -> 'error input!' ;
 fib(N) when N > 2 -> fib(N-2) + fib(N-1);
@@ -40,4 +40,16 @@ fib_tail_optimized(Target_num, Now_num, N_2, N_1) ->
 			N_1 + N_2;
 		true ->
 			fib_tail_optimized(Target_num, Now_num+1, N_1, N_1 + N_2)
+	end.
+
+%阶乘的优化ms几乎没有效果，应该是自动触发了尾递归优化，而且下面这行在实际计算中占比太小，表现不出差距。
+factorial_plus(N) when (N =< 0) orelse (not is_integer(N)) -> 'error input!' ;
+factorial_plus(N) -> factorial_tail_optimized(N-1, N).
+
+factorial_tail_optimized(Now_num, Total) -> 
+	if
+		Now_num == 1 ->
+			Total;
+		true ->
+			factorial_tail_optimized(Now_num - 1, Now_num * Total)
 	end.
