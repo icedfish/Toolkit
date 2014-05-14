@@ -15,7 +15,7 @@ jmx.create_connector: true
 ```
 JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote.ssl=false"
 JAVA_OPTS="$JAVA_OPTS -Dcom.sun.management.jmxremote.authenticate=false"
-JAVA_OPTS="$JAVA_OPTS -Djava.rmi.server.hostname=$(ifconfig|grep 'inet addr:'|grep -v '127.0.0.1'|cut -d: -f2 | awk '{ print $1}')"
+JAVA_OPTS="$JAVA_OPTS -Djava.rmi.server.hostname=$(hostname -i)"
 ```
 
 如果启动时候出现 java.net.MalformedURLException: Local host name unknown:xxx ,那么确保hostname可以解析到这个ip。
