@@ -1,0 +1,77 @@
+@https://gist.github.com/icedfish/88c7a9c7775b198ea4e5
+
+1. Dict包含以下：
+	二手
+	小米
+	手机
+	小米手机
+
+2. elasticsearch.yml 
+
+index.analysis.analyzer :
+    ik :
+        type : "org.elasticsearch.index.analysis.IkAnalyzerProvider"
+        use_smart : false
+    ik_smart :
+        type : "org.elasticsearch.index.analysis.IkAnalyzerProvider"
+        use_smart : true
+  
+3. Create Index for Test：
+
+curl -XPUT 'http://localhost:9200/ik' -d '
+{
+    "settings": {
+        "number_of_replicas": 0
+    },
+    "mappings": {
+        "smart_no": {
+	        "index_analyzer": "ik",
+	        "search_analyzer": "ik_smart",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "index": "analyzed"
+                }
+            }
+        },
+        "smart_yes": {
+	        "index_analyzer": "ik_smart",
+	        "search_analyzer": "ik_smart",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "index": "analyzed"
+                }
+            }
+        }
+    }
+}
+'
+
+4. Create Sample Data:
+
+curl -XPOST 'http://localhost:9200/ik/smart_no/123' -d '
+	{"title" : "徐家汇98新小米手机一台，280元"}
+'
+
+curl -XPOST 'http://localhost:9200/ik/smart_yes/123' -d '
+	{"title" : "徐家汇98新小米手机一台，280元"}
+'
+
+5. Tests：
+
+curl -XPOST 'http://localhost:9200/ik/_analyze?analyzer=ik_smart' -d '徐家汇98新小米手机一台’
+
+curl -XGET 'http://localhost:9200/ik/smart_no/123/_explain' -d '
+{
+  "query": {
+    "match": {
+      "title": {
+        "query": "二手小米手机",
+        "operator": "or"
+      }
+    }
+  }
+}
+'
+
