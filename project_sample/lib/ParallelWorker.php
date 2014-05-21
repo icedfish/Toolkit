@@ -52,7 +52,7 @@ class ParallelWorker {
 	}
 
 	private function log($str) {
-		Logger::log($str, 'parallel_worker');
+		//	Logger::log($str, 'parallel_worker');
 	}
 
 	private function add_worker($data) {

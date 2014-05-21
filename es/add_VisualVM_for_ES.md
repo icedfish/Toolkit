@@ -28,7 +28,7 @@ JAVA_OPTS="$JAVA_OPTS -Djava.rmi.server.hostname=$(hostname -i)"
 ##start jstatd
 
 添加默认配置文件：  
-```vi $JAVA_HOME/bin/jstatd.all.policy```
+```cd $JAVA_HOME/bin && vi ./jstatd.all.policy```
 
 ```
 grant codebase "file:${java.home}/../lib/tools.jar" {
@@ -36,4 +36,4 @@ grant codebase "file:${java.home}/../lib/tools.jar" {
 };
 ```
 需要时启动jstatd，无需重启ES：
-``` $JAVA_HOME/bin/jstatd -J-Djava.security.policy=jstatd.all.policy -p 1099```
+```cd $JAVA_HOME/bin && ./jstatd -J-Djava.security.policy=jstatd.all.policy -p 1099```
