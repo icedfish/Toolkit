@@ -41,7 +41,7 @@ class HttpClient {
 	 * @return string
 	 */
 	private static function get_called_function() {
-		return array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), -3, 1)[0]['function'];
+		return array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 2, 1)[0]['function'];
 	}
 
 	protected static function request($url, $opts = [], $timeout) {
