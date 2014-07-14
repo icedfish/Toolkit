@@ -1,7 +1,6 @@
 # for ubuntu bash #
 # attach to the end of /etc/bash.bashrc
 
-
 if [[ ${EUID} == 0 ]] ; then
         PS1='\[\033[01;31m\]\u@\h\[\033[01;34m\] \W \\$\[\033[00m\] '
 else
@@ -19,3 +18,14 @@ alias 'grep'='grep --color'
 
 #enable coloring of terminal
 export CLICOLOR=1
+
+### other comfigs ###
+# [1] change ulimit by /etc/security/limit.conf
+# * soft nofile 65536
+# * hard nofile 65536
+
+# [2] disable ipv6 by /etc/sysctl.conf
+##disable ipv6
+#net.ipv6.conf.all.disable_ipv6 = 1
+#net.ipv6.conf.default.disable_ipv6 = 1
+#net.ipv6.conf.lo.disable_ipv6 = 1
