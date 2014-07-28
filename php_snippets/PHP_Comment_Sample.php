@@ -34,3 +34,8 @@ foreach ($category_array as $_category) {
 	$_category->copy()->copy();
 }
 
+
+// 常容易弄混适合看自动提示的情况 haystack vs needle
+
+// in_array(mixed needle, array haystack) , array_search()
+// strpos(string haystack, mixed needle) , strstr() 
