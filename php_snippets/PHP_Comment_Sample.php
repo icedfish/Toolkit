@@ -1,11 +1,12 @@
 <?php
+//yubing@baixing.com
 
 //Definition Sample:
 
 /**
  * Class Category
- * @property mixed id 类目的Global ID
- * @property mixed status 状态，1：正常，2：已删除
+ * @property String id 类目的Global ID
+ * @property Array status 状态，1：正常，2：已删除
  * @property mixed created_time 创建时间点，Unix Timestamp格式
  */
 class Category {
@@ -20,9 +21,21 @@ class Category {
 	 * @return Category
 	 */
 	public function copy() {
-		return new Category;
+		return clone $this;
 	}
+
+	/**
+	 * @param Category $target
+	 * @param array $opt
+	 * @return bool
+	 */
+	public function compare(Category $target, Array $opt = []) {
+		return $this->id == $target->id;
+	}
+
 }
+
+
 
 //Usage Sample:
 
@@ -30,8 +43,7 @@ foreach ($category_array as $_category) {
 	/* @var Category $_category */
 
 	$_category->created_time = time();
-
-	$_category->copy()->copy();
+	$_category->copy()->created_time;
 }
 
 
@@ -39,3 +51,8 @@ foreach ($category_array as $_category) {
 
 // in_array(mixed needle, array haystack) , array_search()
 // strpos(string haystack, mixed needle) , strstr() 
+
+
+
+
+
