@@ -20,7 +20,7 @@ alias 'grep'='grep --color'
 export CLICOLOR=1
 
 ### other comfigs ###
-# [1] change ulimit by /etc/security/limit.conf
+# [1] change ulimit by /etc/security/limits.conf
 # * soft nofile 65536
 # * hard nofile 65536
 
