@@ -6,12 +6,11 @@ from setproctitle import *
 # https://code.google.com/p/py-setproctitle/
 
 # @tested:
-#	 works on ubuntu 14.04
-#	 not works on mac osx 10.10
+#	 works on ubuntu_14.04, OSX_10.10
 
 
 def takeuptime(n):
-    setproctitle('subprocess for ' + str(n))
+    setproctitle(getproctitle() + ' [' + str(n) + ']')
     chars = 'abcdefghijklmnopqrstuvwxyz0123456789'  
     s = chars * 1000  
     for i in range(10*n):  
