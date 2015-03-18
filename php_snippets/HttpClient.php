@@ -93,3 +93,5 @@ class HttpClient {
 	}
 
 }
+
+//HttpClient::get('http://www.baidu.com/robots.txt');
