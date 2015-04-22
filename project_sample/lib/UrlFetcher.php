@@ -56,8 +56,8 @@ class UrlFetcher {
 
 	private function initHeader() {
 		$header = array(
-			'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-			'Accept-Language' => 'zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3',
+			'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+			'Accept-Language: zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3',
 		);
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $header);
 		curl_setopt($this->ch, CURLOPT_USERAGENT, self::DEFAULT_UA);
