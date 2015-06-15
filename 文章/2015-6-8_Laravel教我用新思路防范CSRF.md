@@ -11,6 +11,10 @@ Laravel推荐在全局注册VerifyCsrfToken的Middleware，对所有Post,Put,Del
 
 ```php
  <?php echo csrf_field(); ?> 
+ 
+ // blade:
+ 
+ {!! csrf_field() !!}
 ```
 获取表单值的方法：
 
