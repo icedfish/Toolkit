@@ -22,7 +22,7 @@
 <body>
 
 <div id="header">
-  <a href="index.html" class="header">
+  <a href="http://jsoneditoronline.org" class="header">
     <img alt="JSON Editor Online" title="JSON Editor Online" src="img/logo.png" id="logo">
   </a>
 
@@ -64,7 +64,7 @@
         </ul>
       </li>
       <li>
-        <a id="help" title="Open documentation (opens in a new window)" href="http://jsoneditoronline.org/doc/index.html" target="_blank">Help</a>
+        <a id="help" title="Open documentation (opens in a new window)" href="doc/index.html" target="_blank">Help</a>
       </li>
     </ul>
   </div>
@@ -124,19 +124,31 @@
       app.resize();
     </script>
 
+    <div id="ad">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      <!-- jsoneditoronline_responsive -->
+      <ins class="adsbygoogle jsoneditoronline-responsive"
+           style="display:block"
+           data-ad-client="ca-pub-7938810169574141"
+           data-ad-slot="6060825684"
+           data-ad-format="auto"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </div>
 </div>
 
 <div id="footer">
   <div id="footer-inner">
-    <a href="index.html" class="footer">JSON Editor Online 3.5.1</a>
+    <a href="http://jsoneditoronline.org" class="footer">JSON Editor Online 3.5.1</a>
     &bull;
-    <a href="http://jsoneditoronline.org/HISTORY.md" target="_blank" class="footer">History</a>
+    <a href="HISTORY.md" target="_blank" class="footer">History</a>
     &bull;
     <a href="https://github.com/josdejong/jsoneditor/" target="_blank" class="footer">Sourcecode</a>
     &bull;
     <a href="https://github.com/josdejong/jsoneditor/issues" target="_blank" class="footer">Report a bug</a>
     &bull;
-    <a href="http://jsoneditoronline.org/datapolicy.txt" target="_blank" class="footer">Data policy</a>
+    <a href="datapolicy.txt" target="_blank" class="footer">Data policy</a>
     &bull;
     Copyright 2011-2016 Jos de Jong
   </div>
@@ -146,6 +158,13 @@
   app.resize();
 </script>
 
+<!-- Begin Cookie Consent plugin by Silktide - http://silktide.com/cookieconsent -->
+<script type="text/javascript">
+  window.cookieconsent_options = {"message":"This site uses cookies from Google Adsense to personalize ads. Information about your use of this site is shared with Google. By using this site, you agree to its use of cookies.","dismiss":"Got it!","learnMore":"Read more","link":"https://www.google.com/policies/technologies/cookies/","theme":"dark-floating"};
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.9/cookieconsent.min.js"></script>
+<!-- End Cookie Consent plugin -->
 
 </body>
 </html>
