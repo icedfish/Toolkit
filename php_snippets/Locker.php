@@ -34,9 +34,15 @@ class Locker
 
     public function lock()
     {
-        $this->handler = fopen($this->file(), 'w+');
-
-        return flock($this->handler, LOCK_EX | LOCK_NB);    // 独占锁、非阻塞
+        $handler = fopen($this->file(), 'w+');
+        $is_locked = flock($handler, LOCK_EX | LOCK_NB);    // 独占锁、非阻塞
+        if ($is_locked) {
+            //只有锁住了才保存handler,否则__destruct的时候可能导致错误销毁锁文件.
+            $this->handler = $handler;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function unlock()
