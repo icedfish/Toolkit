@@ -11,7 +11,8 @@
 ##############################
 
 login_token=""
-login_email=''
+
+
 format="json"
 lang="cn"
 userAgent="dnspodsh/0.4"
