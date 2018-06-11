@@ -1,25 +1,22 @@
 #!/bin/bash
 
+##### 此bash不稳定，推荐直接更新动态DNS记录 ######
+#https://www.dnspod.cn/docs/records.html#dns
+#修改以下a-f几个参数即可
+#curl -X POST https://dnsapi.cn/Record.Ddns -d 'login_token=aaaa,bbbbb&record_id=cccc&domain=eeee&sub_domain=ffff&record_line=%E9%BB%98%E8%AE%A4&format=json'
+
 ##############################
-# dnspodsh v0.4
+# dnspodsh v0.4.1
 # 基于dnspod api构架的bash ddns客户端
-# 修改者：guisu2010@gmail.com
+# 修改者：guisu2010@gmail.com icedfish@gmail.com
 # 原作者：zrong(zengrong.net)
 # 详细介绍：http://zengrong.net/post/1524.htm
 # 创建日期：2012-02-13
-# 更新日期：2015-05-15
+# 更新日期：2018-06-11
 ##############################
 
+#完整的 API Token 是由 ID,Token 组合而成的，用英文的逗号分割
 login_token=""
-
-
-format="json"
-lang="cn"
-userAgent="dnspodsh/0.4"
-commonPost="login_token=$login_token&format=$format&lang=$lang"
-
-apiUrl='https://dnsapi.cn/'
-ipUrl='http://members.3322.org/dyndns/getip'
 
 # 要处理的域名数组，每个元素代表一个域名的一组记录
 # 在数组的一个元素中，以空格分隔域名和子域名
@@ -27,9 +24,17 @@ ipUrl='http://members.3322.org/dyndns/getip'
 # 如果使用泛域名，必须用\*转义
 #domainList[0]='domain1.com \* @ www'
 #domainList[1]='domain2.com subdomain subdomain2'
-
 # 这里是只修改一个子域名的例子
-domainList[0]='example.com subdomain'
+domainList[0]=' pi'
+
+format="json"
+lang="cn"
+userAgent="dnspodsh/0.4.1"
+commonPost="login_token=$login_token&format=$format&lang=$lang"
+
+apiUrl='https://dnsapi.cn/'
+ipUrl='http://members.3322.org/dyndns/getip'
+
 
 # 多长时间比较一次ip地址
 delay=300
@@ -37,7 +42,6 @@ delay=300
 # logfile
 logDir='/var/log'
 logFile=$logDir'/dnspodsh.log'
-traceFile=$logDir'/dnspodshtrace.log'
 
 # 检测ip地址是否符合要求
 checkip()
@@ -53,7 +57,6 @@ checkip()
 }
 getUrl()
 {
-	#curl -s -A $userAgent -d $commonPost$2 --trace $traceFile $apiUrl$1
 	curl -s -A $userAgent -d $commonPost$2 $apiUrl$1
 }
 getVersion()
@@ -260,8 +263,8 @@ go()
 {
 	# 由于获取到的数据多了一些多余的字符，所以提取ip地址的部分
 	# 从api中获取当前的外网ip
-	# newip=$(curl -s $ipUrl|grep -o $(getRegexp 'value'))
-	newip=`/sbin/ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v 192.168|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
+	newip=$(curl -s $ipUrl|grep -o $(getRegexp 'value'))
+	#newip=`/sbin/ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v 192.168|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
 	# 如果获取最新ip错误，就继续等待下一次取值
 	if ! checkip "$newip";then
 		writeLog 'can not get new ip,waiting...'
