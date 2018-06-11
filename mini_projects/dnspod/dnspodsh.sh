@@ -1,20 +1,21 @@
 #!/bin/bash
 
 ##############################
-# dnspodsh v0.3
+# dnspodsh v0.4
 # 基于dnspod api构架的bash ddns客户端
-# 作者：zrong(zengrong.net)
+# 修改者：guisu2010@gmail.com
+# 原作者：zrong(zengrong.net)
 # 详细介绍：http://zengrong.net/post/1524.htm
 # 创建日期：2012-02-13
-# 更新日期：2012-03-11
+# 更新日期：2015-05-15
 ##############################
 
-login_email=${1:?'必须提供登录名'}
-login_password=${2:?'必须提供密码'}
+login_token=""
+login_email=''
 format="json"
-lang="en"
-userAgent="dnspodsh/0.3(zrongzrong@gmail.com)"
-commonPost="login_email=$login_email&login_password=$login_password&format=$format&lang=$lang"
+lang="cn"
+userAgent="dnspodsh/0.4"
+commonPost="login_token=$login_token&format=$format&lang=$lang"
 
 apiUrl='https://dnsapi.cn/'
 ipUrl='http://members.3322.org/dyndns/getip'
@@ -23,42 +24,45 @@ ipUrl='http://members.3322.org/dyndns/getip'
 # 在数组的一个元素中，以空格分隔域名和子域名
 # 第一个空格前为主域名，后面用空格分离多个子域名
 # 如果使用泛域名，必须用\*转义
-domainList[0]='domain1.com \* @ www'
-domainList[1]='domain2.com subdomain subdomain2'
+#domainList[0]='domain1.com \* @ www'
+#domainList[1]='domain2.com subdomain subdomain2'
+
+# 这里是只修改一个子域名的例子
+domainList[0]='example.com subdomain'
 
 # 多长时间比较一次ip地址
 delay=300
 
 # logfile
-logDir='var/log'
+logDir='/var/log'
 logFile=$logDir'/dnspodsh.log'
 traceFile=$logDir'/dnspodshtrace.log'
 
 # 检测ip地址是否符合要求
 checkip()
 {
+	# ipv4地址
 	if [[ "$1" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]];then
+		return 0
+	# ipv6地址
+	elif [[ "$1" =~ ^([\da-fA-F]{1,4}:){7}[\da-fA-F]{1,4}$|^:((:[\da-fA-F]{1,4}){1,6}|:)$|^[\da-fA-F]{1,4}:((:[\da-fA-F]{1,4}){1,5}|:)$|^([\da-fA-F]{1,4}:){2}((:[\da-fA-F]{1,4}){1,4}|:)$|^([\da-fA-F]{1,4}:){3}((:[\da-fA-F]{1,4}){1,3}|:)$|^([\da-fA-F]{1,4}:){4}((:[\da-fA-F]{1,4}){1,2}|:)$|^([\da-fA-F]{1,4}:){5}:([\da-fA-F]{1,4})?$|^([\da-fA-F]{1,4}:){6}:$ ]];then
 		return 0
 	fi
 	return 1
 }
-
 getUrl()
 {
 	#curl -s -A $userAgent -d $commonPost$2 --trace $traceFile $apiUrl$1
 	curl -s -A $userAgent -d $commonPost$2 $apiUrl$1
 }
-
 getVersion()
 {
 	getUrl "Info.Version"
 }
-
 getUserDetail()
 {
 	getUrl "User.Detail"
 }
-
 writeLog()
 {
 	if [ -w $logDir ];then
@@ -70,19 +74,16 @@ writeLog()
 	fi
 	echo -e $1
 }
-
 getDomainList()
 {
 	getUrl "Domain.List" "&type=all&offset=0&length=10"
 }
-
 # 根据域名id获取记录列表
 # $1 域名id
 getRecordList()
 {
 	getUrl "Record.List" "&domain_id=$1&offset=0&length=20"
 }
-
 # 设置记录
 setRecord()
 {
@@ -101,7 +102,6 @@ setRecord()
 	fi
 	#getUrl 'Record.Modify' "&domain_id=$domainid&record_id=$recordid&sub_domain=$recordName&record_type=$recordtype&record_line=$recordline&ttl=$recordttl&value=$newip"
 }
-
 # 设置一批记录
 setRecords()
 {
@@ -208,7 +208,7 @@ getChangedRecords()
 			# 列表的第一个项目，是主域名
 			if ((j==0));then
 				domainName=$domain
-				domainInfo=$(echo $domainListInfo|getJSONObjByKey 'name' $domainName) 
+				domainInfo=$(echo $domainListInfo|getJSONObjByKey 'name' $domainName)
 				domainid=$(getDataByKey "$domainInfo" 'id')
 				recordList=$(getRecordList $domainid)
 				if [ -z "$recordList" ];then
@@ -259,13 +259,16 @@ go()
 {
 	# 由于获取到的数据多了一些多余的字符，所以提取ip地址的部分
 	# 从api中获取当前的外网ip
-	newip=$(curl -s $ipUrl|grep -o $(getRegexp 'value'))
+	# newip=$(curl -s $ipUrl|grep -o $(getRegexp 'value'))
+	newip=`/sbin/ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v 192.168|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
 	# 如果获取最新ip错误，就继续等待下一次取值
 	if ! checkip "$newip";then
 		writeLog 'can not get new ip,waiting...'
 		sleep $delay
 		continue
 	fi
+	echo 'wan ip:'$newip
+	echo $commonPost
 	# 获取需要修改的记录
 	getChangedRecords
 	if (( ${#changedRecords[@]} > 0 ));then
