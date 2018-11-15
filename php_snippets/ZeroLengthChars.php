@@ -1,8 +1,5 @@
 <?php
-/* 
-    Get list form https://github.com/harley84/ZeroLengthRadar/blob/master/src/main/java/com/ultrahob/zerolength/InvisibleCharacterInspection.java
-    零宽字符在代码和数据中很容易引发奇怪的bug，需要注意。
-*/
+//Get list form https://github.com/harley84/ZeroLengthRadar/blob/master/src/main/java/com/ultrahob/zerolength/InvisibleCharacterInspection.java
 
 class ZeroLengthChars
 {
