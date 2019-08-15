@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<html manifest="/cache.manifest">
+<html>
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 
@@ -12,11 +12,26 @@
 
   <link rel="shortcut icon" href="favicon.ico">
   <!-- TODO: droid font
-      <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
   -->
 
   <link rel="stylesheet" type="text/css" href="app.min.css">
   <script type="text/javascript" src="app.min.js" charset="utf-8"></script>
+
+  <script data-cfasync="false" type="text/javascript">
+    var debug = window.location.search.indexOf('fsdebug') == -1 ? false : true;
+    var freestar = freestar || {};
+    freestar.hitTime = Date.now();
+    freestar.queue = freestar.queue || [];
+    freestar.config = freestar.config || {};
+
+    // Tag IDs set here, must match Tags served in the Body for proper setup
+    freestar.config.enabled_slots = [
+      "jsoneditoronline_300x600_160x600_300x250_ATF"
+    ];
+
+    !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/jsoneditoronline";e+=debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
+  </script>
 </head>
 
 <body>
@@ -56,11 +71,27 @@
         </a>
         <ul id="saveMenu">
           <li>
+            <a id="saveOnline" title="Save and share online">Save online</a>
+          </li>
+          <li>
             <a id="saveToDisk" title="Save file to disk">Save to disk</a>
           </li>
           <li>
-            <a id="saveOnline" title="Save and share online">Save online</a>
+            <a id="saveToUrl" title="Save to a custom url">Save to url</a>
           </li>
+        </ul>
+      </li>
+      <li class="settings">
+        <a id="settings" title="Settings">
+          Settings <span class="dropDownIcon">&#x25BC;</span>
+        </a>
+        <ul id="settingsMenu">
+          <li>
+            <div class="indentation">
+              <label for="indentation">Indentation <input id="indentation" value="2" /></label>
+            </div>
+          </li>
+          <li id="schemasList"></li>
         </ul>
       </li>
       <li>
@@ -84,12 +115,12 @@
   over a network connection. It is used primarily to transmit data between a server
   and web application, serving as an alternative to XML.
   <br><br>
-  From <a target="_blank" href="http://en.wikipedia.org/wiki/Json">Wikipedia</a>
+  From <a target="_blank" href="https://en.wikipedia.org/wiki/Json">Wikipedia</a>
 </div>
 
 <div class="links" style="display:none;">
-  <a target="_blank" href="http://json.org/">http://json.org/</a><br>
-  <a target="_blank" href="http://en.wikipedia.org/wiki/Json">http://en.wikipedia.org/wiki/Json</a><br>
+  <a target="_blank" href="https://json.org/">http://json.org/</a><br>
+  <a target="_blank" href="https://en.wikipedia.org/wiki/Json">http://en.wikipedia.org/wiki/Json</a><br>
 </div>
 
 <div class="faq" style="display:none;"></div>
@@ -119,6 +150,8 @@
 
     <div id="treeEditor"></div>
 
+    <div id="previewEditor"></div>
+
     <script type="text/javascript">
       app.load();
       app.resize();
@@ -128,7 +161,7 @@
 
 <div id="footer">
   <div id="footer-inner">
-    <a href="index.html" class="footer">JSON Editor Online 3.5.1</a>
+    <a href="index.html" class="footer">JSON Editor Online 4.18.0</a>
     &bull;
     <a href="http://jsoneditoronline.org/HISTORY.md" target="_blank" class="footer">History</a>
     &bull;
@@ -138,7 +171,7 @@
     &bull;
     <a href="http://jsoneditoronline.org/datapolicy.txt" target="_blank" class="footer">Data policy</a>
     &bull;
-    Copyright 2011-2016 Jos de Jong
+    Copyright 2011-2019 Jos de Jong
   </div>
 </div>
 
